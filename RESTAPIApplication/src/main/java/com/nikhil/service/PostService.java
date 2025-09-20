@@ -1,14 +1,13 @@
 package com.nikhil.service;
 
-import java.util.List;
-
 import com.nikhil.Dto.PostDto;
+import com.nikhil.Dto.PostResponseDto;
 
 public interface PostService {
 	
 	public PostDto createPost(PostDto postDto);
 	
-	public List<PostDto> getAllPosts();
+	public PostResponseDto getAllPosts(int pageNo, int pageSize, String sortby, String sortDir);
 	
 	public PostDto getPostById(long id);
 

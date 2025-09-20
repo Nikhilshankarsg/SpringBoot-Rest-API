@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nikhil.Dto.PostDto;
+import com.nikhil.Dto.PostResponseDto;
+import com.nikhil.constants.ApplicationConstant;
 import com.nikhil.service.PostService;
 
 @RestController
@@ -30,8 +33,14 @@ public class PostController {
 	}
 	
 	@GetMapping("/getAllPost")
-	public List<PostDto> getAllPosts(){
-		return postService.getAllPosts();
+	//public List<PostDto> getAllPosts(
+	public PostResponseDto getAllPosts(
+			@RequestParam(value = "pageNo", defaultValue = ApplicationConstant.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+			@RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+			@RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SORT_BY, required = false) String sortBy,
+			@RequestParam(value = "sortDir", defaultValue = ApplicationConstant.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+			){
+		return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
 	}
 	
 	@GetMapping("/getPostById/{id}")

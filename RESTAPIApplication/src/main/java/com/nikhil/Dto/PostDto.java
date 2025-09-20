@@ -4,11 +4,8 @@ package com.nikhil.Dto;
 public class PostDto {
 	
 	private Long id;
-	
 	private String title;
-	
 	private String content;
-	
 	private String description;
 
 	public Long getId() {

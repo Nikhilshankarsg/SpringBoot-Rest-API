@@ -4,9 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.nikhil.Dto.PostDto;
+import com.nikhil.Dto.PostResponseDto;
 import com.nikhil.exception.ResourceNotFoundException;
 import com.nikhil.model.PostModel;
 import com.nikhil.repository.PostRepository;
@@ -33,10 +38,36 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public List<PostDto> getAllPosts() {
-		List<PostModel> postModel = postRepository.findAll();
+	//public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+	public PostResponseDto getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 		
-		return postModel.stream().map(postModels -> mapToDto(postModels)).collect(Collectors.toList());
+		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() 
+				:Sort.by(sortBy).descending();
+		//List<PostModel> postModel = postRepository.findAll();
+		
+		//Implemented Pagination
+		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+		Page<PostModel> postModel = postRepository.findAll(pageable);
+		
+		//Get Content from  Page
+		List<PostModel> listOfPosts = postModel.getContent();
+		
+		//return postModel.stream().map(postModels -> mapToDto(postModels)).collect(Collectors.toList());
+		
+		//return listOfPosts.stream().map(postModels -> mapToDto(postModels)).collect(Collectors.toList());
+		
+		List<PostDto> content = listOfPosts.stream().map(postModels -> mapToDto(postModels)).collect(Collectors.toList());
+		
+		PostResponseDto postResponseDto = new PostResponseDto();
+		
+		postResponseDto.setContent(content);
+		postResponseDto.setPageNo(postModel.getNumber());
+		postResponseDto.setPageSize(postModel.getSize());
+		postResponseDto.setTotalElements(postModel.getTotalElements());
+		postResponseDto.setTotalPages(postModel.getTotalPages());
+		postResponseDto.setLast(postModel.isLast());
+		
+		return postResponseDto;
 	}
 	
 	@Override
