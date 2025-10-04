@@ -1,10 +1,15 @@
 package com.nikhil.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -15,8 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(
-		name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
+@Table(name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
 public class PostModel {
 	
 	@Id
@@ -31,6 +35,9 @@ public class PostModel {
 	
 	@Column(name = "description", nullable = false)
 	private String description;
+	
+	@OneToMany(mappedBy ="postModel", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CommentModel> commentModel = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -46,6 +53,10 @@ public class PostModel {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public Set<CommentModel> getCommentModel() {
+		return commentModel;
 	}
 
 	public void setId(Long id) {
@@ -64,9 +75,7 @@ public class PostModel {
 		this.description = description;
 	}
 	
-	
-	
-	
-	
-	
+	public void setCommentModel(Set<CommentModel> commentModel) {
+		this.commentModel = commentModel;
+	}
 }
