@@ -69,7 +69,8 @@ public class CommentServiceImpl implements CommentService{
 	
 	@Override
 	public CommentDto updateCommentById(long postId, long commentId, CommentDto commentRequest) {
-PostModel postModel = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+
+		PostModel postModel = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 		
 		CommentModel commentModel = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 		
@@ -105,5 +106,22 @@ PostModel postModel = postRepository.findById(postId).orElseThrow(() -> new Reso
 		commentDto.setEmail(commentModel.getEmail());
 		commentDto.setBody(commentModel.getBody());
 		return commentDto;
+	}
+
+
+	@Override
+	public void deleteComment(long postId, long commentId) {
+		
+PostModel postModel = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+		
+		CommentModel commentModel = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+		
+		if(!commentModel.getPostModel().getId().equals(postModel.getId())){
+			throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment Doesnot Belongs to Post");
+		}
+		
+		commentRepository.delete(commentModel);
+		
+		
 	}
 }
